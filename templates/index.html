@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Couper PDF en 2 (gauche/droite)</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+  <header>
+    <h1>Couper chaque page en deux (gauche / droite)</h1>
+    <p>Upload multiple PDF → téléchargement en ZIP. Qualité conservée (vecteur).</p>
+  </header>
+
+  <main>
+    <form class="card" action="{{ url_for('convert') }}" method="post" enctype="multipart/form-data">
+      <label class="dropzone" for="files">
+        <input id="files" name="files" type="file" accept="application/pdf" multiple required>
+        <div class="dz-text">
+          <strong>Choisir des PDF</strong>
+          <span>ou glisser-déposer ici</span>
+        </div>
+      </label>
+      <ul id="fileList" class="file-list"></ul>
+      <button type="submit" class="btn">Lancer</button>
+    </form>
+  </main>
+
+  <footer>
+    <small>Traitement local côté serveur. Aucun contenu n'est stocké après la session.</small>
+  </footer>
+
+  <script>
+    const input = document.getElementById('files');
+    const list = document.getElementById('fileList');
+    input.addEventListener('change', () => {
+      list.innerHTML = '';
+      Array.from(input.files).forEach(f => {
+        const li = document.createElement('li');
+        li.textContent = `${f.name} (${(f.size/1024/1024).toFixed(2)} Mo)`;
+        list.appendChild(li);
+      });
+    });
+    const dz = document.querySelector('.dropzone');
+    ['dragenter','dragover'].forEach(evt => dz.addEventListener(evt, e => { e.preventDefault(); dz.classList.add('drag'); }));
+    ['dragleave','drop'].forEach(evt => dz.addEventListener(evt, e => { e.preventDefault(); dz.classList.remove('drag'); }));
+  </script>
+</body>
+</html>
